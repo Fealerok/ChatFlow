@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+:root {
+  --main-blue: #2563EB;
+  --main-purple: #7C3AED;
+
+   --main-gradient: linear-gradient(135deg, var(--main-blue) 0%, var(--main-purple) 100%);
+}
+
