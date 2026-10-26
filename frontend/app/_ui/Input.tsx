@@ -15,7 +15,7 @@ const InputForm = ({
 
   return (
     <form className='w-full h-full'>
-        <input placeholder={placeholder} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} className={`text-[20px] w-full h-full outline-none border-none' ${isFocused ? "text-black" : "text-gray-700"}`} type={isPassword ? "password" : "text"} onChange={(e) => setInputValue(e.target.value)} />
+        <input placeholder={placeholder} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} className={`text-[20px] w-full h-full outline-none border-none' ${isFocused ? "text-black" : "text-gray-700"}`} type={isPassword ? "password" : "text"} onChange={(e) => getInputValue(e.target.value)} />
     </form>
   )
 }

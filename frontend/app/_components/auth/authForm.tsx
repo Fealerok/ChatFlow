@@ -1,16 +1,61 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputForm from '@/app/_ui/Input'
 import Image from 'next/image'
 import login_icon from "../../../public/avatar-login.png"
 import padlock_icon from "../../../public/padlock-icon.png"
 import eye_icon from "../../../public/eye-icon.png"
+import { useRouter } from 'next/navigation'
+import isValidPassword from '@/app/_utils/validation'
 
-const AuthForm = () => {
+interface IAuthForm{
+    setIsOpenedWindow: (isOpened: boolean) => void,
+    setTextInformationWindow: (text: string) => void
+}
+
+const AuthForm = ({setIsOpenedWindow, setTextInformationWindow}:IAuthForm) => {
+    const router = useRouter();
 
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
 
     const [isShowPassword, setIsShowPassword] = useState(true);
+
+
+    const auth = async () => {
+        if (login.trim().length == 0){
+            setTextInformationWindow("Для авторизации введите логин");
+            setIsOpenedWindow(true);
+            return;
+        }
+
+        if (password.trim().length == 0){
+            setTextInformationWindow("Для авторизации введите пароль");
+            setIsOpenedWindow(true);
+            return;
+        }
+
+        const validation = isValidPassword(password);
+
+        if (!validation.isValid){
+            setTextInformationWindow(validation.message);
+            setIsOpenedWindow(true);
+            return;
+        }
+
+        const result = await fetch("http://localhost:3010/auth", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                login, password
+            })
+        })
+
+        router.replace("/chat");
+    }
+
   return (
     <div className='w-full h-full flex flex-col gap-[30px] justify-between'>
         <div className="flex flex-col">
@@ -34,7 +79,7 @@ const AuthForm = () => {
         </div>
        
         <div className="w-full h-[60px] rounded-[10px] overflow-hidden">
-            <button className='w-full h-full bg-[image:var(--main-gradient)] text-white text-[20px]'>Войти в систему</button>
+            <button onClick={auth} className='cursor-pointer w-full h-full bg-[image:var(--main-gradient)] text-white text-[20px]'>Войти в систему</button>
         </div>
     </div>
   )

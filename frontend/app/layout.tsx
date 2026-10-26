@@ -13,7 +13,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`w-screen h-screen antialiased font-[Tahoma]`}
     >
-      <body className="h-full w-full flex flex-col">{children}</body>
+      <body className="w-screen h-screen flex flex-col">{children}</body>
     </html>
   );
 }
