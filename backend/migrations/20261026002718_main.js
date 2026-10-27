@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = async function (knex) {
+export const up = async function (knex) {
   let exists = await knex.schema.hasTable("Roles");
 
   //Создание таблицы Roles
@@ -36,7 +36,9 @@ exports.up = async function (knex) {
                 t.increments("id").primary();
                 t.text("login").notNullable().unique();
                 t.text('password_hash').notNullable();
-                t.integer("id_role").notNullable().references("id").inTable("Users").onUpdate("CASCADE").onDelete("CASCADE");
+                t.jsonb("skills").notNullable();
+                t.text("token").unique();
+                t.integer("id_role").notNullable().references("id").inTable("Roles").onUpdate("CASCADE").onDelete("CASCADE");
             })
         }
     } catch (error) {
@@ -49,4 +51,4 @@ exports.up = async function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {};
+export const down = function (knex) {};

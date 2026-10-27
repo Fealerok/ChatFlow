@@ -9,7 +9,7 @@ export default {
     client: "pg",
     connection: {
         host: "localhost",
-        port: 5423,
+        port: 5432,
         user: "postgres",
         password: "1111",
         database: "ChatFlow"
@@ -23,7 +23,7 @@ export default {
     client: "pg",
     connection: {
         host: "localhost",
-        port: 5423,
+        port: 5432,
         user: "postgres",
         password: "1111",
         database: "ChatFlow"
@@ -41,7 +41,7 @@ export default {
     client: "pg",
     connection: {
         host: "localhost",
-        port: 5423,
+        port: 5432,
         user: "postgres",
         password: "1111",
         database: "ChatFlow"

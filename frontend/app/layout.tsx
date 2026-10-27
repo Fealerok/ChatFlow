@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { MainContextProvider } from "./_context/MainContext";
 
 
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`w-screen h-screen antialiased font-[Tahoma]`}
     >
-      <body className="w-screen h-screen flex flex-col">{children}</body>
+      <body className="w-screen h-screen flex flex-col">
+        <MainContextProvider>{children}</MainContextProvider>
+      </body>
     </html>
   );
 }

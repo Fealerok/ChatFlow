@@ -77,7 +77,7 @@ const AuthPage = () => {
 
           {/* Форма ввода */}
           <div className="w-full h-full mt-[20px]">
-            {categories[selectedButtonId-1].name == "auth" ? <AuthForm setIsOpenedWindow={setIsOpenedInformationWindow} setTextInformationWindow={setTextInformationWindow} /> : <RegistrationForm />}
+            {categories[selectedButtonId-1].name == "auth" ? <AuthForm setIsOpenedWindow={setIsOpenedInformationWindow} setTextInformationWindow={setTextInformationWindow} /> : <RegistrationForm setIsOpenedWindow={setIsOpenedInformationWindow} setTextInformationWindow={setTextInformationWindow} />}
           </div>
         </div>
       </div>

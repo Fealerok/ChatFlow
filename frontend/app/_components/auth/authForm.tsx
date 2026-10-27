@@ -53,7 +53,17 @@ const AuthForm = ({setIsOpenedWindow, setTextInformationWindow}:IAuthForm) => {
             })
         })
 
-        router.replace("/chat");
+        if (!result.ok){
+            setTextInformationWindow((await result.json()).message);
+            setIsOpenedWindow(true);
+            return;
+        }
+
+        else{
+            router.replace("/chat");
+        }
+
+        
     }
 
   return (
