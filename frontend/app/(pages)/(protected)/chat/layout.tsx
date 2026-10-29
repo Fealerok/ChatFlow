@@ -1,10 +1,14 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import chat_icon_gradient from "../../../../public/chat-icon-gradient.png"
 import Image from 'next/image'
 import InputForm from '@/app/_ui/Input'
 import search_icon from "../../../../public/search-icon.png"
 import UserDialog from '@/app/_components/chat/user-dialog'
+import { useMainContext } from '@/app/_context/MainContext'
+import { useRouter } from 'next/navigation'
+import InformationWindow from '@/app/_ui/InformationWindow'
+import { useAuthFetch } from '@/app/_utils/useAuthFetch'
 
 const categories = [
     {id: 1, name: "Все чаты"},
@@ -17,20 +21,30 @@ const ChatLayout = ({
 
     const [searchValue, setSearchValue] = useState("");
     const [selectedButtonId, setSelectedButtonId] = useState(categories[0].id);
-
+    const [isOpenedWindow, setIsOpenedWindow] = useState(false);
+    const [textModalWindow, setTextModalWindow] = useState("");
+    
+    const context = useMainContext();
+    const router = useRouter();
+    const authFetch = useAuthFetch();
     
 
-  return (
-    <div className='w-full h-full'>
-        <div className="flex flex-col w-[400px] h-full border p-[20px] justify-between">
-            <header className='flex items-center gap-[15px]'>
-                <Image src={chat_icon_gradient} alt='icon' width={48} height={48} />
-                <span className='font-bold text-[24px]'>ChatFlow</span>
-            </header>
+    useEffect(() => {
+        if (context.isLoading) return;
+
+        if (!context.accessToken || !context.user){
+            router.replace("/auth");
+        }
+    }, [context.isLoading, context.accessToken, context.user]);
+
+
+    return(
+        <div className='w-full h-full relative flex'>
+        <div className="flex flex-col w-[400px] h-full p-[20px] justify-between">
             {/* Поиск */}
-            <div className="w-full h-[60px] flex items-center gap-[30px] mt-[60px]" >
+            <div className="w-full h-[60px] flex items-center gap-[30px]" >
                 <Image src={search_icon} alt='search' width={24} height={24}/>
-                <InputForm placeholder='Поиск пользователя...' isPassword={false} getInputValue={setSearchValue} />
+                <InputForm placeholder='Поиск диалога...' isPassword={false} getInputValue={setSearchValue} />
             </div>
 
              {/*Диалоги  */}
@@ -52,8 +66,10 @@ const ChatLayout = ({
         <div className="">
             {children}
         </div>
+
+        <InformationWindow isOpened={isOpenedWindow} textInformationWindow={textModalWindow} setIsOpened={setIsOpenedWindow} />
     </div>
-  )
+    )
 }
 
 export default ChatLayout

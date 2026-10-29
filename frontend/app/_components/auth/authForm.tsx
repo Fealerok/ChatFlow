@@ -6,6 +6,7 @@ import padlock_icon from "../../../public/padlock-icon.png"
 import eye_icon from "../../../public/eye-icon.png"
 import { useRouter } from 'next/navigation'
 import isValidPassword from '@/app/_utils/validation'
+import { useMainContext } from '@/app/_context/MainContext'
 
 interface IAuthForm{
     setIsOpenedWindow: (isOpened: boolean) => void,
@@ -19,6 +20,7 @@ const AuthForm = ({setIsOpenedWindow, setTextInformationWindow}:IAuthForm) => {
     const [password, setPassword] = useState("");
 
     const [isShowPassword, setIsShowPassword] = useState(true);
+    const context = useMainContext();
 
 
     const auth = async () => {
@@ -60,6 +62,10 @@ const AuthForm = ({setIsOpenedWindow, setTextInformationWindow}:IAuthForm) => {
         }
 
         else{
+            const {user, accessToken} = await result.json();
+
+            context.setAccessToken(accessToken);
+            context.setUser(user);
             router.replace("/chat");
         }
 

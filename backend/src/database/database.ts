@@ -68,8 +68,24 @@ class Database{
         }
     }
 
+    getRefreshToken = async (login: string) => {
+        try {
+            const refreshToken = await dbConnection("Users")
+                                        .where({login: login})
+                                        .select("token");
+            if (refreshToken.length == 0){
+                throw new Error("Токена нет в БД");
+            }
+
+            return refreshToken[0].token;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     registration = async (login: string, passwordHash: string) => {
         
+
 
             const foundUser = await dbConnection("Users")
                                     .where({login: login})
@@ -99,6 +115,15 @@ class Database{
 
         } catch (error) {
             throw new Error(`Ошибка регистрации в БД ${error}`)
+        }
+    }
+
+    logout = async (login: string) => {
+        try {
+            await dbConnection("Users").where({login: login})
+                                .update({token: null});
+        } catch (error) {
+            throw new Error(`Ошибка logout в БД: ${error}`);
         }
     }
 }

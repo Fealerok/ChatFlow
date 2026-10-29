@@ -69,6 +69,8 @@ const RegistrationForm = ({setIsOpenedWindow, setTextInformationWindow}:IRegistr
 
         setTextInformationWindow((await result.json()).message);
         setIsOpenedWindow(true);
+        setLogin("");
+        setPassword("");
     }
 
   return (

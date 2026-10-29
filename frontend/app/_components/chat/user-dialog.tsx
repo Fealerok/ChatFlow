@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import user_avatar from "../../../public/avatar-login.png"
 import Image from 'next/image'
 
@@ -9,8 +9,10 @@ const UserDialog = ({
     login: string,
     lastMessage: string
 }) => {
+
+
   return (
-    <div className='w-full h-[60px] flex items-center justify-between'>
+    <div className={`w-full h-[60px] flex items-center justify-between cursor-pointer`}>
         <div className="flex items-center gap-[10px] w-full pr-[10px] h-full">
              <Image src={user_avatar} width={60} height={60} alt='' />
         {/* Ник и сообщение */}
