@@ -23,10 +23,21 @@ const ChatLayout = ({
     const [selectedButtonId, setSelectedButtonId] = useState(categories[0].id);
     const [isOpenedWindow, setIsOpenedWindow] = useState(false);
     const [textModalWindow, setTextModalWindow] = useState("");
+
+    const [selectedUserChat, setSelectedUserChat] = useState<string | null>(null);
     
     const context = useMainContext();
     const router = useRouter();
     const authFetch = useAuthFetch();
+
+    useEffect(() => {
+        if (!selectedUserChat){
+            router.replace("/chat");
+        }
+        else{
+            router.replace(`/chat/${selectedUserChat}`);
+        }
+    }, [selectedUserChat]);
     
 
     useEffect(() => {
@@ -56,8 +67,8 @@ const ChatLayout = ({
                     ))}
                     </div>  
                 <div className="w-full h-full mt-[30px] flex  flex-col gap-[20px] overflow-y-auto">
-                    <UserDialog login='Fealer' lastMessage='Привет!' />
-                    <UserDialog login='Fealer' lastMessage='Привет!'/>
+                    <UserDialog getUserChat={setSelectedUserChat} login='Fealer' lastMessage='Привет!' />
+                    <UserDialog getUserChat={setSelectedUserChat} login='Fealer2' lastMessage='Привет!'/>
                     
 
                 </div>

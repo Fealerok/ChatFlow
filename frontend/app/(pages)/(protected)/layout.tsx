@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Image from 'next/image'
 import chat_icon_gradient from "../../../public/chat-icon-gradient.png"
 import { useMainContext } from '@/app/_context/MainContext';
@@ -9,6 +9,8 @@ import { useAuthFetch } from '@/app/_utils/useAuthFetch';
 import { useState } from 'react'
 import user_avatar from "../../../public/avatar-login.png"
 import profile_arrow from "../../../public/profile-arrow.png"
+import to_profile_icon from "../../../public/user-burger-menu.png"
+import logout_icon from "../../../public/logout-icon.png"
 
 
 
@@ -21,7 +23,11 @@ const ProtectedLayout = ({children}:{children: React.ReactNode}) => {
 
     const [isOpenedWindow, setIsOpenedWindow] = useState(false);
     const [textModalWindow, setTextModalWindow] = useState("");
-        
+    
+        const logoHandler = () => {
+            router.replace("/chat");
+        }
+
         const logout = async () => {
              const result = await fetch("http://localhost:3010/logout", {
                 method: "POST",
@@ -49,11 +55,12 @@ const ProtectedLayout = ({children}:{children: React.ReactNode}) => {
 
         const toProfile = () => {
             setIsOpenBurgerMenu(false);
+            router.replace(`/profile/${context.user?.login}`);
         }
   return (
     <div className='w-full h-full flex flex-col items-center'>
         <header className='flex justify-between items-center h-[60px] mt-[20px] mb-[20px] w-[calc(100%-40px)]'>
-                <div className="flex items-center gap-[15px] w-full h-full">
+                <div className="flex items-center gap-[15px] w-full h-full hover:cursor-pointer" onClick={logoHandler}>
                     <Image src={chat_icon_gradient} alt='icon' width={48} height={48} />
                     <span className='font-bold text-[24px]'>ChatFlow</span>
                 </div>
@@ -65,9 +72,19 @@ const ProtectedLayout = ({children}:{children: React.ReactNode}) => {
                 </div>
                 
 
-                <div className={`w-[300px] border absolute z-100 right-[20px] top-[80px] p-[10px] flex flex-col gap-[20px] ${isOpenBurgerMenu ? "block" : "hidden"}`}>
-                    <button onClick={toProfile} className='cursor-pointer bg-[image:var(--main-gradient)] w-full h-[60px] text-white rounded-[10px] text-[20px]'>Перейти в профиль</button>
-                    <button onClick={logout} className='bg-[image:var(--main-gradient)] text-white w-full h-[60px] rounded-[10px] text-[20px] cursor-pointer'>Выход</button>
+                <div className={`w-[300px] absolute z-100 right-[20px] top-[80px] p-[10px] flex flex-col gap-[20px] ${isOpenBurgerMenu ? "block" : "hidden"}`}>
+                    <div className="w-full flex items-center gap-[10px]">
+                        <Image src={user_avatar} alt='' />
+                        <span className='text-[20px]'>{context.user?.login}</span>
+                    </div>
+                    <button onClick={toProfile} className='group cursor-pointer hover:bg-[image:var(--main-gradient)] w-full h-[60px] text-black hover:text-white rounded-[10px] text-[20px] flex items-center gap-[10px]'>
+                        <Image src={to_profile_icon} alt='' width={30} className='group-hover:invert' />
+                        <span>Перейти в профиль</span>
+                    </button>
+                    <button onClick={logout} className='group hover:bg-[image:var(--main-gradient)] text-black hover:text-white w-full h-[60px] rounded-[10px] text-[20px] cursor-pointer flex items-center gap-[10px]'>
+                         <Image src={logout_icon} alt='' width={25} className='group-hover:invert ml-[4px]' />
+                        <span>Выход</span>
+                    </button>
                 </div>
         </header>
 

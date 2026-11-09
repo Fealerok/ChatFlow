@@ -18,6 +18,7 @@ export const useAuthFetch = () => {
         });
 
         if (!result.ok){
+            console.log(1);
             const chechAuth = await fetch(`${baseUrl}/auth/refresh`, {
                 method: "POST",
                 headers: {
@@ -30,6 +31,8 @@ export const useAuthFetch = () => {
                 throw new Error("Ошибка авторизации");
             }
 
+            console.log(2);
+
             const data = await chechAuth.json();
 
             context.setAccessToken(data.accessToken);
@@ -39,7 +42,7 @@ export const useAuthFetch = () => {
             ...options,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `bearer ${context.accessToken}`
+                Authorization: `bearer ${data.accessToken}`
             },
             body: options.body
         });

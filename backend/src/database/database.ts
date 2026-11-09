@@ -126,6 +126,45 @@ class Database{
             throw new Error(`Ошибка logout в БД: ${error}`);
         }
     }
+
+    getProfileInformation = async (login: string) => {
+         try {
+            const data = ((await dbConnection("Users").where({login: login})
+                                                        .select("skills", "bio")))[0];
+            return data;
+        } catch (error) {
+            throw new Error(`Ошибка получения скиллов в БД: ${error}`);
+        }
+    }
+
+    getUserSkills = async (login: string) => {
+        try {
+            const skills = ((await dbConnection("Users").where({login: login})
+                                                        .select("skills"))[0]).skills;
+            
+            return skills;
+        } catch (error) {
+            throw new Error(`Ошибка получения скиллов в БД: ${error}`);
+        }
+    }
+
+    saveUserSkills = async (login: string, skills: {[k: string]: any}) => {
+        try {
+            await dbConnection("Users").where({login: login})
+                                        .update({skills: skills});
+        } catch (error) {
+            throw new Error(`Ошибка сохранения скиллов в БД: ${error}`);
+        }
+    }
+
+    saveUserBio = async (userBio: string, login: string) => {
+        try {
+            await dbConnection("Users").where({login: login})
+                                        .update({bio: userBio});
+        } catch (error) {
+            throw new Error(`Ошибка сохранения описания в БД: ${error}`);
+        }
+    }
 }
 
 export const database = new Database();

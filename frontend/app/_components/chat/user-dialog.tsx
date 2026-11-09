@@ -4,15 +4,20 @@ import Image from 'next/image'
 
 const UserDialog = ({
     login,
-    lastMessage
+    lastMessage,
+    getUserChat
 } : {
     login: string,
-    lastMessage: string
+    lastMessage: string,
+    getUserChat: (userChat: string) => void
 }) => {
 
+    const selectUserChat = () => {
+        getUserChat(login);
+    }
 
   return (
-    <div className={`w-full h-[60px] flex items-center justify-between cursor-pointer`}>
+    <div className={`w-full h-[60px] flex items-center justify-between cursor-pointer`} onClick={selectUserChat}>
         <div className="flex items-center gap-[10px] w-full pr-[10px] h-full">
              <Image src={user_avatar} width={60} height={60} alt='' />
         {/* Ник и сообщение */}

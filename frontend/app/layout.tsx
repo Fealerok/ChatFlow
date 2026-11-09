@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { MainContextProvider } from "./_context/MainContext";
+import { Suspense } from "react";
 
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`w-screen h-screen antialiased font-[Tahoma]`}
     >
       <body className="w-screen h-screen flex flex-col">
+        <Suspense fallback={<span>Загрузка</span>}>
         <MainContextProvider>{children}</MainContextProvider>
+        </Suspense>
+        
       </body>
     </html>
   );

@@ -80,6 +80,7 @@ router.post("/registration", async (req: Request, res: Response) => {
 
 router.post("/auth/refresh", (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
+
     
     if (!refreshToken){
         return res.status(401).json({
@@ -145,6 +146,77 @@ router.post("/logout", async (req: Request, res: Response) => {
 
 router.post("/test", checkTokens, (req: Request, res: Response) => {
     return res.status(200).json({});
+});
+
+router.post("/get-user-skills", checkTokens, async (req: Request, res: Response) => {
+    const {login} = req.body;
+
+    try {
+        const skills = await db.getUserSkills(login);
+
+        return res.status(200).json({
+            message: "Умения получены",
+            skills
+        });
+    } catch (error) {
+        
+         return res.status(500).json({
+            message: "Ошибка запроса на сервере."
+        });
+    }
+});
+
+router.post("/get-profile-information", checkTokens, async (req: Request, res: Response) => {
+    const {login} = req.body;
+
+    try {
+        const data = await db.getProfileInformation(login);
+
+        return res.status(200).json({
+            message: "Данные профиля получены получены",
+            data
+        });
+    } catch (error) {
+        
+         return res.status(500).json({
+            message: "Ошибка запроса на сервере."
+        });
+    }
+});
+
+router.post("/save-user-skills", checkTokens, async (req: Request, res: Response) => {
+    try {
+        const {skills, login} = req.body;
+
+        const obj = Object.fromEntries(skills.map(({ name, level }: {name: string, level: number}) => [name, level]));
+
+        await db.saveUserSkills(login, obj);
+
+        return res.status(200).json({
+            message: "Успешное сохранение умений"
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Ошибка запроса на сервере."
+        });
+    }
+});
+
+router.post("/save-user-bio", checkTokens, async (req: Request, res: Response) => {
+    try {
+        const {userBio, login} = req.body;
+
+        await db.saveUserBio(userBio, login);
+
+        return res.status(200).json({message: "Успешное сохранение описания"});
+    } catch (error) {
+        console.log(error);
+         return res.status(500).json({
+            message: "Ошибка запроса на сервере."
+        });
+    }
 });
 
 export default router;
