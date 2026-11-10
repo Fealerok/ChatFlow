@@ -13,6 +13,7 @@ import react_icon from "../../../../../public/profile/react.png";
 import python_icon from "../../../../../public/profile/python.png";
 import js_icon from "../../../../../public/profile/js.png";
 import accept_edit_icon from "../../../../../public/profile/accept.png";
+import { profile } from "console";
 
 
 const backgroundsSkills = [
@@ -46,6 +47,8 @@ const Profile = () => {
   { name: "Python", level: 0, image: python_icon},
   { name: "Javascript", level: 0, image: js_icon}
   ]);
+
+  const [isFoundProfile, setIsFoundProfile] = useState(false);
 
 
   const editBio = () => {
@@ -147,6 +150,11 @@ const Profile = () => {
     if (result.ok){
       const data = (await result.json()).data;
 
+      if (!data){
+        setIsFoundProfile(false)
+        return;
+      }
+
       const skills = data.skills;
       const bio = data.bio;
       const skillsKeys = Object.keys(skills);
@@ -157,7 +165,9 @@ const Profile = () => {
         )
       })
 
-      setUserBio(bio);
+      !bio ? setUserBio("") : setUserBio(bio)
+
+      setIsFoundProfile(true)
     }
   }
 
@@ -165,7 +175,16 @@ const Profile = () => {
 
   }, []);
 
+  if (!isFoundProfile && !context.isLoading){
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <span className="font-bold text-[30px]">Профиль не найден.</span>
+      </div>
+    )
+  }
 
+
+  if (isFoundProfile && !context.isLoading){
   return (
     <div className="w-full h-full flex justify-center">
       <div className="h-full w-[70%] flex flex-col items-center">
@@ -239,10 +258,10 @@ const Profile = () => {
                   <span className="text-[20px] font-bold">{skill.name}</span>
                 </div>
 
-                <div className="w-full h-[30px] flex items-center gap-[15px]">
+                <div className={`${params.slug === context.user?.login ? "" : "pl-[40px] pr-[40px]"} w-full h-[30px] flex items-center gap-[15px]`}>
                   <button
                   onClick={() => decrementSkill(skill.name)}
-                  disabled={skill.level <= 0 ? true : false}
+                  disabled={skill.level <= 0 || !isEditBio ? true : false}
                     className={`${isEditSkills ? "opacity-0 group-hover:opacity-100" : "opacity-0"} ${params.slug === context.user?.login ? "block" : "hidden"} transition-opacity duration-200 w-[40px] h-full flex items-center justify-center cursor-pointer bg-[image:var(--main-gradient)] rounded-[15px]`}
                   >
                     <div className="w-[50%] h-[2px] rounded bg-white"></div>
@@ -254,7 +273,7 @@ const Profile = () => {
                   </div>
                   <button
                   onClick={() => incrementSkill(skill.name)}
-                  disabled={skill.level >= 3 ? true : false}
+                  disabled={skill.level >= 3 || !isEditBio ? true : false}
                     className={`${isEditSkills ? "opacity-0 group-hover:opacity-100" : "opacity-0"} ${params.slug === context.user?.login ? "block" : "hidden"} transition-opacity duration-200 w-[40px] h-full flex items-center justify-center cursor-pointer relative bg-[image:var(--main-gradient)] rounded-[15px]`}
                   >
                     <div className="w-[50%] h-[2px] rounded bg-white"></div>
@@ -267,7 +286,8 @@ const Profile = () => {
         </div>
       </div>
     </div>
-  );
+  )
 };
+}
 
 export default Profile;

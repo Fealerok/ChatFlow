@@ -41,6 +41,7 @@ const ProtectedLayout = ({children}:{children: React.ReactNode}) => {
             });
     
             if (result.ok){
+                context.setSelectedChat(null);
                 context.setAccessToken(null);
                 context.setUser(null);
                 setIsOpenBurgerMenu(false);
@@ -55,8 +56,24 @@ const ProtectedLayout = ({children}:{children: React.ReactNode}) => {
 
         const toProfile = () => {
             setIsOpenBurgerMenu(false);
+            context.setSelectedChat(null);
             router.replace(`/profile/${context.user?.login}`);
+            
         }
+
+        useEffect(() => {
+            if (context.isLoading) return;
+
+            if (!context.user || !context.accessToken){
+                router.replace("/auth");
+            }
+
+            context.socket.connect();
+
+            return () => {
+                context.socket.disconnect();
+            }
+        }, [context.isLoading, context.user, context.accessToken]);
   return (
     <div className='w-full h-full flex flex-col items-center'>
         <header className='flex justify-between items-center h-[60px] mt-[20px] mb-[20px] w-[calc(100%-40px)]'>
@@ -72,7 +89,7 @@ const ProtectedLayout = ({children}:{children: React.ReactNode}) => {
                 </div>
                 
 
-                <div className={`w-[300px] absolute z-100 right-[20px] top-[80px] p-[10px] flex flex-col gap-[20px] ${isOpenBurgerMenu ? "block" : "hidden"}`}>
+                <div className={`w-[300px] absolute z-100 bg-white shadow-[10px_10px_50px_5px_gray] right-[20px] top-[80px] p-[10px] flex flex-col gap-[20px] ${isOpenBurgerMenu ? "block" : "hidden"}`}>
                     <div className="w-full flex items-center gap-[10px]">
                         <Image src={user_avatar} alt='' />
                         <span className='text-[20px]'>{context.user?.login}</span>

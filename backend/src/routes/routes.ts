@@ -219,4 +219,39 @@ router.post("/save-user-bio", checkTokens, async (req: Request, res: Response) =
     }
 });
 
+router.post("/get-conversations", checkTokens, async (req: Request, res: Response) => {
+    try {
+        const {login} = req.body;
+
+        const conversations = await db.getConversations(login);
+
+        return res.status(200).json({
+            message: "Успешно получены беседы",
+            conversations
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Ошибка запроса на сервере."
+        });
+    }
+});
+
+router.post("/get-name-chat", checkTokens, async (req: Request, res: Response) => {
+    try {
+        const {mainLogin, conversationLogin} = req.body;
+        const chatName = await db.getChatName(mainLogin, conversationLogin);
+
+        return res.status(200).json({
+            message: "Успешное получение названия беседы",
+            chatName
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Ошибка запроса на сервере."
+        });
+    }
+});
+
 export default router;

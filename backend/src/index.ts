@@ -3,9 +3,9 @@ import express, {type Request, type Response} from "express"
 import router from "./routes/routes.js";
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import { app, server } from './socket-connection/socket.js';
 
 const PORT = 3010;
-const app = express();
 
 app.use(cookieParser());
 
@@ -18,6 +18,6 @@ app.use(express.json())
 app.use("/", router);
 
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Сервер запущен`);
 });

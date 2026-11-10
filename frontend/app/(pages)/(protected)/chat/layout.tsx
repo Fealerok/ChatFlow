@@ -23,6 +23,12 @@ const ChatLayout = ({
     const [selectedButtonId, setSelectedButtonId] = useState(categories[0].id);
     const [isOpenedWindow, setIsOpenedWindow] = useState(false);
     const [textModalWindow, setTextModalWindow] = useState("");
+    const [conversations, setConversations] = useState<Array<{
+        id: number,
+        userALogin: string,
+        userBLogin: string,
+        last_message_at: Date
+    }>>([]);
 
     const [selectedUserChat, setSelectedUserChat] = useState<string | null>(null);
     
@@ -30,14 +36,25 @@ const ChatLayout = ({
     const router = useRouter();
     const authFetch = useAuthFetch();
 
-    useEffect(() => {
-        if (!selectedUserChat){
-            router.replace("/chat");
+    const openConversation = async (loginChat: string) => {
+        setSelectedUserChat(loginChat);
+
+        const result = await authFetch("/get-name-chat", {
+            method: "POST",
+            body: JSON.stringify({
+                mainLogin: context.user?.login,
+                conversationLogin: loginChat
+            })
+        });
+
+        if (result.ok){
+            const chatName = (await result.json()).chatName;
+
+            context.setSelectedChat(chatName);
+            router.replace(`/chat/${loginChat}`);
         }
-        else{
-            router.replace(`/chat/${selectedUserChat}`);
-        }
-    }, [selectedUserChat]);
+    }
+
     
 
     useEffect(() => {
@@ -47,6 +64,31 @@ const ChatLayout = ({
             router.replace("/auth");
         }
     }, [context.isLoading, context.accessToken, context.user]);
+
+    useEffect(() => {
+
+        const getConversations = async () => {
+            if (context.isLoading) return
+
+            const result = await authFetch("/get-conversations", {
+                method: "POST",
+                body: JSON.stringify({login: context.user?.login})
+            });
+
+            if (result.ok){
+                const data = await result.json();
+
+                setConversations(data.conversations);
+            }
+        }
+
+        getConversations();
+
+        if (!context.selectedChat) router.replace("/chat");
+
+    }, [context.isLoading]);
+
+
 
 
     return(
@@ -67,8 +109,12 @@ const ChatLayout = ({
                     ))}
                     </div>  
                 <div className="w-full h-full mt-[30px] flex  flex-col gap-[20px] overflow-y-auto">
-                    <UserDialog getUserChat={setSelectedUserChat} login='Fealer' lastMessage='Привет!' />
-                    <UserDialog getUserChat={setSelectedUserChat} login='Fealer2' lastMessage='Привет!'/>
+                    {
+                        conversations.map((c, i) => (
+                            <UserDialog key={i} getUserChat={openConversation} login={c.userALogin === context.user?.login ? c.userBLogin : c.userALogin} lastMessage='' />
+                        ))
+                    }
+                    
                     
 
                 </div>

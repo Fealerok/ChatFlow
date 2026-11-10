@@ -1,6 +1,6 @@
 "use client"
 import { createContext, useContext, useEffect, useState } from "react";
-import io from "socket.io-client"
+import io, { Socket } from "socket.io-client"
 
 interface IUser {
     login: string,
@@ -12,7 +12,10 @@ interface IMainContext{
     setUser: (u: IUser | null) => void,
     accessToken: string | null,
     setAccessToken: (token: string | null) => void,
-    isLoading: boolean
+    isLoading: boolean,
+    socket: Socket,
+    selectedChat: string | null,
+    setSelectedChat: (chat: string | null) => void
 }
 
 const MainContext = createContext<IMainContext | null>(null);
@@ -26,6 +29,7 @@ export const MainContextProvider = ({children}:{children: React.ReactNode}) => {
     const [user, setUser] = useState<IUser | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedChat, setSelectedChat] = useState<string | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -66,7 +70,7 @@ export const MainContextProvider = ({children}:{children: React.ReactNode}) => {
 
 
     return (
-        <MainContext.Provider value={{user, setUser, accessToken, setAccessToken, isLoading}}>{children}</MainContext.Provider>
+        <MainContext.Provider value={{user, setUser, accessToken, setAccessToken, isLoading, socket, selectedChat, setSelectedChat}}>{children}</MainContext.Provider>
     )
 }
 

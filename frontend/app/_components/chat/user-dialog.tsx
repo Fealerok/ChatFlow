@@ -14,6 +14,8 @@ const UserDialog = ({
 
     const selectUserChat = () => {
         getUserChat(login);
+
+        
     }
 
   return (

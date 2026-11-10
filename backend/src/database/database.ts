@@ -1,6 +1,7 @@
 import  bcrypt  from 'bcrypt';
 import knex from "knex"
 import { AppError } from "../errors/AppError.js";
+import { join } from 'node:path';
 
 const config = {
     client: "pg",
@@ -163,6 +164,51 @@ class Database{
                                         .update({bio: userBio});
         } catch (error) {
             throw new Error(`Ошибка сохранения описания в БД: ${error}`);
+        }
+    }
+
+    getConversations = async (login: string) => {
+        try {
+            const idUser = ((await dbConnection("Users")
+                                .where({login: login})
+                                .select("id"))[0]).id;
+            const conversations = await dbConnection("Conversations")
+                                        .where({id_userA: idUser})
+                                        .orWhere({id_userB: idUser})
+                                        .join("Users as userA", "Conversations.id_userA", "=", "userA.id")
+                                        .join("Users as userB", "Conversations.id_userB", "=", "userB.id")
+                                        .select("Conversations.id", "userA.login as userALogin", "userB.login as userBLogin", "last_message_at");
+            return conversations;
+        } catch (error) {
+            throw new Error(`Ошибка получения бесед в БД: ${error}`);
+        }
+    }
+
+    getChatName = async (mainLogin: string, conversationLogin: string) => {
+        try {
+            const mainUserId = ((await dbConnection("Users").where({login: mainLogin}).select("id"))[0]).id;
+            const conversationUserId = ((await dbConnection("Users").where({login: conversationLogin}).select("id"))[0]).id;
+
+            let chatName = "";
+            let result = await dbConnection("Conversations").where({
+                id_userA: mainUserId,
+                id_userB: conversationUserId
+            })
+            .orWhere({
+                id_userA: conversationUserId,
+                id_userB: mainUserId
+            }).select("*");
+
+            if (result[0].id_userA === mainUserId){
+                chatName = `${mainLogin}-${conversationLogin}`
+            }
+            else{
+                chatName = `${conversationLogin}-${mainLogin}`
+            }
+
+            return chatName;
+        } catch (error) {
+            throw new Error(`Ошибка создания названия беседы в БД: ${error}`);
         }
     }
 }
